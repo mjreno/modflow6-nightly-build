@@ -18,10 +18,10 @@ jobs:
   make_dist:
     name: Make development distribution
 #    uses: MODFLOW-USGS/modflow6/.github/workflows/release.yml@develop
-    uses: mjreno/modflow6/.github/workflows/release.yml@develop
+    uses: mjreno/modflow6/.github/workflows/release.yml@netcdf_ciwin_test6
     with:
       approve: false
-      branch: develop
+      branch: netcdf_ciwin_test6
       developmode: true
       full: false
       run_tests: false
