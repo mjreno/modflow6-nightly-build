@@ -47,12 +47,13 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v6
         with:
-          repository: MODFLOW-ORG/modflow6-nightly-build
+          repository: ${{ github.repository_owner }}/modflow6-nightly-build
 
       - name: Checkout modflow6
         uses: actions/checkout@v6
         with:
           repository: ${{ github.repository_owner }}/modflow6
+          ref: ci-diagnose-nc4
           path: modflow6
 
       - name: Setup Python
@@ -73,9 +74,9 @@ jobs:
   make_dist:
     name: Make developmode distribution
     needs: get_version
-    uses: MODFLOW-ORG/modflow6/.github/workflows/release.yml@develop
+    uses: mjreno/modflow6/.github/workflows/release.yml@ci-diagnose-nc4
     with:
-      branch: develop
+      branch: ci-diagnose-nc4
       releasemode: false
       run_tests: true
       version: ${{ needs.get_version.outputs.version }}
@@ -96,12 +97,13 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v6
         with:
-          repository: MODFLOW-ORG/modflow6-nightly-build
+          repository: ${{ github.repository_owner }}/modflow6-nightly-build
 
       - name: Checkout modflow6
         uses: actions/checkout@v6
         with:
-          repository: MODFLOW-ORG/modflow6
+          repository: ${{ github.repository_owner }}/modflow6
+          ref: ci-diagnose-nc4
           path: modflow6
 
       - name: Setup Python
