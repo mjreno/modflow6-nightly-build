@@ -42,6 +42,7 @@ jobs:
         shell: bash -l {0}
     outputs:
       version: ${{ steps.get_version.outputs.version }}
+      sha: ${{ steps.get_sha.outputs.sha }}
     steps:
 
       - name: Checkout repo
@@ -62,7 +63,7 @@ jobs:
 
       - name: Install Python packages
         run: pip install -r requirements.txt
-      
+
       - name: Get version
         working-directory: modflow6/distribution
         id: get_version
@@ -70,12 +71,21 @@ jobs:
           ver=$(python update_version.py -g)
           echo "version=${ver}" >> "$GITHUB_OUTPUT"
 
+      # Pin this commit so the release job's later, independent checkout
+      # generates notes from what was actually built, not develop's latest.
+      - name: Get commit SHA
+        working-directory: modflow6
+        id: get_sha
+        run: |
+          sha=$(git rev-parse HEAD)
+          echo "sha=${sha}" >> "$GITHUB_OUTPUT"
+
   make_dist:
     name: Make developmode distribution
     needs: get_version
     uses: MODFLOW-ORG/modflow6/.github/workflows/release.yml@develop
     with:
-      branch: develop
+      branch: ${{ needs.get_version.outputs.sha }}
       releasemode: false
       run_tests: true
       version: ${{ needs.get_version.outputs.version }}
@@ -103,6 +113,7 @@ jobs:
         with:
           repository: MODFLOW-ORG/modflow6
           path: modflow6
+          ref: ${{ needs.get_version.outputs.sha }}
 
       - name: Setup Python
         uses: actions/setup-python@v7
